@@ -1,0 +1,121 @@
+*  {
+    margin: 0;
+
+    font-family: Arial, serif;
+}
+
+body {
+    height: 100vh;
+
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        position: fixed;
+
+        width: 25%;
+        height: 100%;
+
+        padding: 50px 0;
+
+        background-color: #F2F2F2;
+
+        label {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+
+            width: 65%;
+
+            margin: 70px 0;
+
+            h2 {
+                text-align: center;
+            }
+
+            .formInput {
+                height: 40px;
+                padding: 0 20px;
+                background-color: #D9D9D9;
+                border: none;
+            }
+
+            div {
+                display: flex;
+                gap: 6%;
+
+                button {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 5px;
+
+                    width: 47%;
+                    height: 20px;
+
+                    cursor: pointer;
+
+
+
+                    &:hover {
+                        img, p {
+                            transform: scale(1.1);
+                            transition: 0.3s;
+                        }
+                    }
+
+                    img {
+                        width: 20px;
+                    }
+                }
+            }
+        }
+
+        .option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+
+            div {
+                display: flex;
+                align-items: center;
+
+                img {
+                    height: 30px;
+
+                    margin:  0 15px 0 0;
+                }
+
+                .textSize {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 15px;
+                    background-color: #fff;
+                    border: 1px solid #000;
+                    border-radius: 30px;
+
+                    p {
+                        padding: 5px 10px;
+                        cursor: pointer;
+                        text-align: center;
+
+                        &:nth-child(2) {
+                            border-left: 1px solid #000;
+                            border-right: 1px solid #000;
+                        }
+
+                        &:hover {
+                            background-color: #f0f0f0;
+                            color: #0078d7;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
