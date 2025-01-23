@@ -63,6 +63,8 @@ $conn->close();
     <meta charset="UTF-8">
     <title>Plan ZUT</title>
     <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="darkmode.js" defer></script>
+    <script type="text/javascript" src="fontSize.js" defer></script>
 </head>
 <body>
 <main>
@@ -91,13 +93,13 @@ $conn->close();
             <div>
                 <img alt="font size" src="images/Aa.svg"/>
                 <div class="textSize">
-                    <p>SMALL</p>
-                    <p>MEDIUM</p>
-                    <p>BIG</p>
+                    <p data-size="small">SMALL</p>
+                    <p data-size="medium">MEDIUM</p>
+                    <p data-size="big">BIG</p>
                 </div>
             </div>
             <div>
-                <button class="darkMode-btn">
+                <button class="darkMode-btn" id="darkModeToggle">
                     <img alt="moon" src="images/moon.svg"/>
                     <p>DARK MODE</p>
                 </button>

@@ -1,12 +1,38 @@
+:root {
+    --background: #F2F2F2;
+    --view-switch: #E8E8E8;
+    --input: #D9D9D9;
+    --border: #f0f0f0;
+    --lesson: #f9f9f9;
+    --black: #000;
+    --hover: #0078d7;
+    --navBorder: #c0c0c0;
+    --gray: #555;
+    --white: #fff;
+    --text: #000;
+}
+.darkmode{
+    --background: #2e2d2d;
+    --view-switch: #2E2E2E;
+    --input: #3C3C3C;
+    --border: #444444;
+    --lesson: #2A2A2A;
+    --black: #000;
+    --hover: #00A6FF;
+    --navBorder: #fff;
+    --gray: #CCCCCC;
+    --white: #3C3C3C;
+    --text: #fff;
+}
 *  {
     margin: 0;
-
+    color: var(--text);
     font-family: Arial, serif;
 }
 
 body {
+    background-color: var(--white);
     height: 100vh;
-
     .sidebar {
         display: flex;
         flex-direction: column;
@@ -19,7 +45,7 @@ body {
 
         padding: 50px 0;
 
-        background-color: #F2F2F2;
+        background-color: var(--background);
 
         label {
             display: flex;
@@ -38,7 +64,7 @@ body {
             .formInput {
                 height: 40px;
                 padding: 0 20px;
-                background-color: #D9D9D9;
+                background-color: var(--input);
                 border: none;
             }
 
@@ -94,8 +120,8 @@ body {
                     justify-content: space-between;
                     align-items: center;
                     padding: 15px;
-                    background-color: #fff;
-                    border: 1px solid #000;
+                    background-color: var(--white);
+                    border: 1px solid var(--black);
                     border-radius: 30px;
 
                     p {
@@ -104,13 +130,13 @@ body {
                         text-align: center;
 
                         &:nth-child(2) {
-                            border-left: 1px solid #000;
-                            border-right: 1px solid #000;
+                            border-left: 1px solid var(--black);
+                            border-right: 1px solid var(--black);
                         }
 
                         &:hover {
-                            background-color: #f0f0f0;
-                            color: #0078d7;
+                            background-color: var(--border);
+                            color: var(--hover);
                         }
                     }
                 }
@@ -132,13 +158,13 @@ body {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background-color: #e8e8e8;
+        background-color: var(--view-switch);
         border-radius: 25px;
         width: 120px;
         height: 40px;
         padding: 5px;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-        border: 1px solid #c0c0c0;
+        border: 1px solid var(--navBorder);
     }
 
     .nav-button {
@@ -166,16 +192,16 @@ body {
         display: flex;
         align-items: center;
         gap: 10px;
-        background-color: #e8e8e8;
+        background-color: var(--view-switch);
         border-radius: 25px;
         padding: 5px 15px;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-        border: 1px solid #c0c0c0;
+        border: 1px solid var(--navBorder);
         height: 100%;
     }
 
     #dateInput {
-        background-color: #D9D9D9;
+        background-color: var(--input);
         border: none;
         padding: 5px 10px;
         width: 100px;
@@ -186,7 +212,7 @@ body {
 
     .confirm-btn {
         padding: 5px 10px;
-        background-color: #c0c0c0;
+        background-color: var(--white);
         border: none;
         cursor: pointer;
         border-radius: 5px;
@@ -203,11 +229,11 @@ body {
         display: flex;
         align-items: center;
         gap: 10px;
-        background-color: #e8e8e8;
+        background-color: var(--view-switch);
         border-radius: 25px;
         padding: 5px 15px;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-        border: 1px solid #c0c0c0;
+        border: 1px solid var(--navBorder);
         height: 100%;
     }
 
@@ -224,15 +250,16 @@ body {
     .divider {
         width: 1px;
         height: 100%;
-        background-color: #c0c0c0;
+        background-color: var(--navBorder);
     }
     .lesson-panel-container {
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-top: 50px;
+        padding-top: 50px;
         width: 100%;
-        height: 90vh;
+        height: 100vh;
+        background-color: var(--white);
     }
 
     .lesson-panels {
@@ -245,16 +272,21 @@ body {
 
     .lesson-panel {
         width: calc(100% / 8);
-        background-color: #fff;
+        background-color: var(--white);
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        padding: 15px;
+        padding: 1em;
         display: flex;
         flex-direction: column;
         width:150px;
-        height:600px;
+        min-height: 400px;
+        height:auto;
         overflow: hidden;
-        border:1px solid #c0c0c0;
+        border:1px solid var(--navBorder);
+        font-size: 1rem;
+        line-height: 1.5;
+        box-sizing: border-box;
     }
+
 
     .lesson-header {
         text-align: center;
@@ -269,7 +301,7 @@ body {
     .divider-line {
         width: 100%;
         height: 2px;
-        background-color: #c0c0c0;
+        background-color: var(--navBorder);
         margin-top: 10px;
     }
 
@@ -277,16 +309,17 @@ body {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        padding: 10px;
-        border: 1px solid #f0f0f0;
+        padding: 5px;
+        border: 1px solid var(--border);
         margin-bottom: 10px;
         border-radius: 5px;
-        background-color: #f9f9f9;
+        background-color: var(--lesson);
+        overflow-wrap: break-word;
     }
 
     .lesson-time {
         font-size: 14px;
-        color: #555;
+        color: var(--gray);
         text-align: right;
         margin-bottom: 5px;
     }
@@ -305,10 +338,11 @@ body {
         position: fixed;
         bottom: 20px;
         right: 20px;
-        border: none;
+        border: 1px solid var(--navBorder);
         border-radius: 50%;
         padding: 15px;
         cursor: pointer;
+        background-color: var(--white);
     }
 
     .add-btn img {
@@ -316,7 +350,7 @@ body {
         height: 24px;
     }
     .darkMode-btn {
-        border: 1px solid black;
+        border: 1px solid var(--black);
         border-radius:30px;
         padding: 13px;
         cursor: pointer;
@@ -324,7 +358,7 @@ body {
         align-items: center;
         gap: 10px;
         width: 150px;
-        background-color: white;
+        background-color: var(--white);
     }
 
     .darkMode-btn img {
@@ -336,5 +370,5 @@ body {
         margin: 0;
         font-size: 14px;
     }
-}
 
+}
