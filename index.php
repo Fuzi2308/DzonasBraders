@@ -9,7 +9,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "SELECT DISTINCT przedmiotID, tytul, start, koniec, grupaID FROM lekcja WHERE start BETWEEN '2025-01-12' AND '2025-01-18' AND grupaID = 7 ORDER BY start";
+$sql = "SELECT DISTINCT przedmiotID, tytul, start, koniec, grupaID FROM lekcja WHERE lekcjaID < 25 ORDER BY start";
 
 $result = $conn->query($sql);
 
@@ -60,6 +60,7 @@ $conn->close();
 <!DOCTYPE html>
 <html lang="pl">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <title>Plan ZUT</title>
     <link rel="stylesheet" href="style.css">
@@ -131,7 +132,10 @@ $conn->close();
         <button class="add-btn">
             <img alt="plus" src="images/plus.svg" />
         </button>
-        <?php echo $lessonHTML; ?>
+        <div class="slide">
+            <?php echo $lessonHTML; ?>
+        </div>
+
     </section>
 
 

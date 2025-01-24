@@ -254,12 +254,13 @@ body {
     }
     .lesson-panel-container {
         display: flex;
-        justify-content: center;
-        align-items: center;
-        padding-top: 50px;
+        align-items: flex-start;
         width: 100%;
-        height: 100vh;
-        background-color: var(--white);
+        margin-top:110px;
+        height: auto;
+        overflow-y: visible;
+        position: relative;
+        justify-content: center;
     }
 
     .lesson-panels {
@@ -271,7 +272,6 @@ body {
     }
 
     .lesson-panel {
-        width: calc(100% / 8);
         background-color: var(--white);
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         padding: 1em;
@@ -343,6 +343,7 @@ body {
         padding: 15px;
         cursor: pointer;
         background-color: var(--white);
+        z-index: 1000;
     }
 
     .add-btn img {
@@ -371,4 +372,92 @@ body {
         font-size: 14px;
     }
 
+    @media (max-width: 900px) {
+        .sidebar {
+            position: initial;
+            top: 0;
+            width: 100%;
+            height: auto;
+            padding: 20px 0;
+        }
+        .sidebar button {
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            text-align: center;
+        }
+        .content{
+            width:100%;
+        }
+        .navigation {
+            position: initial;
+            width: 30%;
+            justify-content: space-around;
+            display: flex;
+            margin: 15px auto 0;
+        }
+        .nav-button {
+            font-size: 16px;
+            width: 100%;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .switch-container {
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: auto;
+            top: 80px;
+            right: 0;
+            padding-left: 10px;
+        }
+
+        .date-switch,
+        .view-switch {
+            width: 80%;
+            margin: 0 auto;
+            padding: 10px;
+            top: 35px;
+            left: 50%;
+        }
+
+        #dateInput {
+            width: 50%; /* Skalowanie pola wyboru daty */
+            padding: 8px;
+        }
+
+        .confirm-btn {
+            width: auto;
+            padding: 8px 12px;
+        }
+
+        .view-btn {
+            font-size: 14px;
+            padding: 8px;
+            flex-grow: 1; /* Dopasowanie przycisków do kontenera */
+            text-align: center;
+        }
+
+        .lesson-panel-container {
+            justify-content: left;
+            padding-left: 15px;
+            display: flex;
+            align-items: flex-start;
+            width:1050px;
+            margin-top: 0px;
+        }
+        .lesson-panel{
+            flex-shrink: 0;
+        }
+        .slide
+        {
+            margin-top: 165px;
+            width: 100%;
+            overflow-x: scroll;
+        }
+        .content{
+            flex-grow: 1;
+        }
+    }
 }
