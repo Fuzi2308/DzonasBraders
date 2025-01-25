@@ -47,39 +47,39 @@ body {
 
         background-color: var(--background);
 
-        label {
+        form {
+            width: 100%;
             display: flex;
-            flex-direction: column;
             justify-content: center;
-            gap: 10px;
 
-            width: 65%;
-
-            margin: 70px 0;
-
-            h2 {
-                text-align: center;
-            }
-
-            .formInput {
-                height: 40px;
-                padding: 0 20px;
-                background-color: var(--input);
-                border: none;
-            }
-
-            div {
+            label {
                 display: flex;
-                gap: 6%;
+                flex-direction: column;
+                justify-content: center;
+                gap: 10px;
+
+                width: 65%;
+
+                margin: 70px 0;
+
+                h2 {
+                    text-align: center;
+                }
+
+                .formInput {
+                    height: 40px;
+                    padding: 0 20px;
+                    background-color: var(--input);
+                    border: none;
+                }
 
                 button {
                     display: flex;
                     justify-content: center;
                     align-items: center;
                     gap: 5px;
-
-                    width: 47%;
                     height: 20px;
+                    width: 100%;
 
                     cursor: pointer;
 
@@ -96,6 +96,7 @@ body {
                         width: 20px;
                     }
                 }
+
             }
         }
 

@@ -4,58 +4,154 @@ $username = "root";
 $password = "";
 $dbname = "test";
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-$sql = "SELECT DISTINCT przedmiotID, tytul, start, koniec, grupaID FROM lekcja WHERE lekcjaID < 25 ORDER BY start";
-
-$result = $conn->query($sql);
-
-$lessonHTML = '';
-
-if ($result->num_rows > 0) {
-    $lessonHTML .= '<section class="lesson-panel-container">';
-    $lessonHTML .= '<div class="lesson-panels">';
-
-    $currentDate = '';
-
-    while ($row = $result->fetch_assoc()) {
-        $start_date = new DateTime($row['start']);
-        $end_date = new DateTime($row['koniec']);
-        $lessonDate = $start_date->format('Y-m-d');
-
-        if ($currentDate !== $lessonDate) {
-            if ($currentDate !== '') {
-                $lessonHTML .= '</div>';
-            }
-            $lessonHTML .= '<div class="lesson-panel">';
-            $lessonHTML .= '<div class="lesson-header">';
-            $lessonHTML .= '<p class="lesson-date">' . $lessonDate . '</p>';
-            $lessonHTML .= '<hr class="divider-line"/>';
-            $lessonHTML .= '</div>';
-            $currentDate = $lessonDate;
-        }
-
-        $lessonHTML .= '<div class="lesson">';
-        $lessonHTML .= '<div class="lesson-title">';
-        $lessonHTML .= '<p>' . htmlspecialchars($row['tytul']) . '</p>';
-        $lessonHTML .= '</div>';
-        $lessonHTML .= '<div class="lesson-time">';
-        $lessonHTML .= '<p>' . $start_date->format('H:i') . ' - ' . $end_date->format('H:i') . '</p>';
-        $lessonHTML .= '</div>';
-        $lessonHTML .= '</div>';
+try {
+    // Połączenie z bazą danych
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn->connect_error) {
+        throw new Exception("Connection failed: " . $conn->connect_error);
     }
 
-    $lessonHTML .= '</div>';
-    $lessonHTML .= '</section>';
-} else {
-    $lessonHTML = '<p>Brak zajęć w wybranym tygodniu.</p>';
+    // Przygotowanie danych z formularza
+    $wykladowca = isset($_POST['wykladowca']) ? trim($_POST['wykladowca']) : '';
+    $klasa = isset($_POST['klasa']) ? trim($_POST['klasa']) : '';
+    $grupa = isset($_POST['grupa']) ? trim($_POST['grupa']) : '';
+    $numerIndeksu = isset($_POST['numerIndeksu']) ? trim($_POST['numerIndeksu']) : '';
+    $zajecia = isset($_POST['zajecia']) ? trim($_POST['zajecia']) : '';
+
+    // Budowanie zapytania SQL
+    $query = "SELECT DISTINCT lekcja.tytul AS tytul, lekcja.start AS start, wykladowca.nazwisko AS wyk_nazwisko, 
+                wykladowca.imie AS wyk_imie
+FROM lekcja
+INNER JOIN wykladowca ON lekcja.wykladowcaID = wykladowca.wykladowcaID
+INNER JOIN sala ON lekcja.salaID = sala.salaID
+INNER JOIN grupa ON lekcja.grupaID = grupa.grupaID
+INNER JOIN numeralbumugrupa ON lekcja.grupaID = numeralbumugrupa.grupaID
+";
+
+    $params = [];
+    $types = "";
+
+    // Dodanie warunku dla grupy
+    if (!empty($grupa)) {
+        $query .= " WHERE lekcja.grupaID = ?";
+        $params[] = $grupa;
+        $types .= "s";
+    }
+
+    // Dodanie warunku dla zajęć (tytułu)
+    if (!empty($zajecia)) {
+        if (empty($grupa) && empty($wykladowca) && empty($klasa)) {
+            $query .= " WHERE";
+        } else {
+            $query .= " AND";
+        }
+        $query .= " lekcja.tytul LIKE ?";
+        $params[] = "%$zajecia%";
+        $types .= "s";
+    }
+
+    // Dodanie warunku dla klasy (sala)
+    if (!empty($klasa)) {
+        if (empty($grupa) && empty($zajecia) && empty($wykladowca)) {
+            $query .= " WHERE";
+        } else {
+            $query .= " AND";
+        }
+        $query .= " sala.pokoj LIKE ?";
+        $params[] = "%$klasa%";  // Szukamy w sali (pokoju)
+        $types .= "s";
+    }
+
+    // Dodanie warunku dla nauczyciela (wykładowca)
+    if (!empty($wykladowca)) {
+        if (empty($grupa) && empty($zajecia) && empty($klasa)) {
+            $query .= " WHERE";
+        } else {
+            $query .= " AND";
+        }
+        $query .= " (wykladowca.nazwisko LIKE ? OR wykladowca.imie LIKE ?)";
+        $params[] = "%$wykladowca%";  // Szukamy nauczyciela po nazwisku
+        $params[] = "%$wykladowca%";  // Szukamy nauczyciela po imieniu
+        $types .= "ss"; // Typy dla dwóch parametrów
+    }
+
+    if (!empty($numerIndeksu)) {
+        if (empty($grupa) && empty($zajecia) && empty($klasa) && empty($wykladowca) && empty($numerIndeksu)) {
+            $query .= " WHERE";
+        } else {
+            $query .= " AND";
+        }
+
+        // Dodajemy warunek dla numeru indeksu
+        $query .= " numeralbumugrupa.numerAlbumuID LIKE ?";
+        $params[] = $numerIndeksu;  // Dodajemy numer indeksu z symbolem %
+        $types .= "s";  // Określamy, że parametr jest typu string
+    }
+//150
+    // Dodanie warunku daty
+    $query .= " AND lekcja.start BETWEEN '2025-01-17T00:00:00' AND '2025-01-18T23:59:59' LIMIT 20";
+
+    $lessonHTML = '';
+
+    if ($query != "") {
+        $stmt = $conn->prepare($query);
+        if ($types) {
+            $stmt->bind_param($types, ...$params);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $lessonHTML .= '<section class="lesson-panel-container">';
+            $lessonHTML .= '<div class="lesson-panels">';
+
+            $currentDate = ''; // Zmienna do trzymania daty aktualnej lekcji
+
+            while ($row = $result->fetch_assoc()) {
+                $start_date = new DateTime($row['start']); // Pobieramy datę rozpoczęcia
+                $end_date = isset($row['koniec']) ? new DateTime($row['koniec']) : $start_date; // Zabezpieczenie na wypadek braku daty zakończenia
+                $lessonDate = $start_date->format('Y-m-d'); // Formatowanie daty
+
+                // Jeżeli data lekcji różni się od poprzedniej, rozpoczynamy nową sekcję
+                if ($currentDate !== $lessonDate) {
+                    if ($currentDate !== '') {
+                        $lessonHTML .= '</div>'; // Zamykamy poprzednią datę
+                    }
+                    $lessonHTML .= '<div class="lesson-panel">'; // Nowy panel lekcji
+                    $lessonHTML .= '<div class="lesson-header">';
+                    $lessonHTML .= '<p class="lesson-date">' . $lessonDate . '</p>';
+                    $lessonHTML .= '<hr class="divider-line"/>';
+                    $lessonHTML .= '</div>';
+                    $currentDate = $lessonDate; // Ustawiamy nową datę jako bieżącą
+                }
+
+                // Dodawanie pojedynczej lekcji do panelu
+                $lessonHTML .= '<div class="lesson">';
+                $lessonHTML .= '<div class="lesson-title">';
+                $lessonHTML .= '<p>' . htmlspecialchars($row['tytul'], ENT_QUOTES, 'UTF-8') . '</p>';
+                $lessonHTML .= '</div>';
+                $lessonHTML .= '<div class="lesson-time">';
+                $lessonHTML .= '<p>' . $start_date->format('H:i') . ' - ' . $end_date->format('H:i') . '</p>';
+                $lessonHTML .= '</div>';
+                $lessonHTML .= '</div>';
+            }
+
+            $lessonHTML .= '</div>';
+            $lessonHTML .= '</section>';
+        } else {
+            $lessonHTML = '<p>Brak zajęć w wybranym okresie.</p>';
+        }
+
+        $stmt->close();
+    }// Przygotowanie i wykonanie zapytania
+
+
+} catch (Exception $e) {
+    $lessonHTML = "<p>Błąd: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</p>";
 }
 
-$conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pl">
@@ -66,30 +162,27 @@ $conn->close();
     <link rel="stylesheet" href="style.css">
     <script type="text/javascript" src="darkmode.js" defer></script>
     <script type="text/javascript" src="fontSize.js" defer></script>
+    <script type="text/javascript" src="filers.js" defer></script>
 </head>
 <body>
 <main>
     <aside class="sidebar">
         <img class="logo" alt="logo" src="images/logo.png"/>
-
-        <label>
-            <h2>FILTERS</h2>
-            <input class="formInput" placeholder="wykładowca">
-            <input class="formInput" placeholder="klasa">
-            <input class="formInput" placeholder="numer grupy">
-            <input class="formInput" placeholder="numer indeksu">
-            <input class="formInput" placeholder="zajęcia">
-            <div>
-                <button class="formInput">
-                    <img alt="check" src="images/check.svg"/>
-                    <p>ACCEPT</p>
-                </button>
-                <button class="formInput">
-                    <img alt="clear" src="images/clear.svg"/>
-                    <p>CLEAR</p>
-                </button>
-            </div>
-        </label>
+        <form method="post" action="">
+            <label>
+                <input class="formInput" name="wykladowca" placeholder="wykładowca">
+                <input class="formInput" name="klasa" placeholder="klasa">
+                <input class="formInput" name="grupa" placeholder="numer grupy">
+                <input class="formInput" name="numerIndeksu" placeholder="numer indeksu">
+                <input class="formInput" name="zajecia" placeholder="zajęcia">
+                <div>
+                    <button type="submit" class="formInput">
+                        <img alt="check" src="images/check.svg"/>
+                        <p>ACCEPT</p>
+                    </button>
+                </div>
+            </label>
+        </form>
         <div class="option">
             <div>
                 <img alt="font size" src="images/Aa.svg"/>
@@ -104,7 +197,6 @@ $conn->close();
                     <img alt="moon" src="images/moon.svg"/>
                     <p>DARK MODE</p>
                 </button>
-
             </div>
         </div>
     </aside>
@@ -135,11 +227,7 @@ $conn->close();
         <div class="slide">
             <?php echo $lessonHTML; ?>
         </div>
-
     </section>
-
-
-
 </main>
 </body>
 </html>
