@@ -1,13 +1,6 @@
 <?php
 session_start();
 
-// Sprawdzenie sesji dla numeru albumu
-if (!isset($_SESSION['numerIndeksu'])) {
-    echo 'Sesja została utracona lub jeszcze nie ustawiona.';
-} else {
-    echo 'Sesja działa poprawnie: ' . $_SESSION['numerIndeksu'];
-}
-
 $servername = "localhost";
 $username = "root";
 $password = "";
